@@ -14,7 +14,9 @@ from selenium.webdriver.support import expected_conditions as ec
 from grades import result
 from reviews_stud import write_reviews
 url = "https://logbook.itstep.org/login/index#/"
-group = "П31"
+group = input("Введите точное название группы ")
+c_hw = int(input("Введите количество заданных(проверенных) ДЗ "))
+c_cw = int(input('Введите количество проведенных уроков '))
 # login(url)
 options = Options()
 options.add_argument(
@@ -24,36 +26,37 @@ options.add_experimental_option("excludeSwitches", ['enable-automation']);
 driver = webdriver.Chrome(options=options)
 driver.maximize_window()
 driver.get(url)
-time.sleep(5)
+time.sleep(15)
 ru = "/html/body/div/div/div/div/ul/li[1]/a"
 log = '/html/body/div/div/form/div[1]/div/input'
 pas = '/html/body/div/div/form/div[2]/div/input'
 
 click_ru = driver.find_element(By.XPATH, ru)
 click_ru.click()
-time.sleep(10)
+time.sleep(25)
 entry_login = driver.find_element(By.XPATH, log)
 entry_login.send_keys(login_user)
 entry_password = driver.find_element(By.XPATH, pas)
 entry_password.send_keys(password_user)
 button_enter = driver.find_element(By.XPATH, "/html/body/div/div/form/div[3]/button/span")
 button_enter.click()
-time.sleep(15) # Время на вход
+
+time.sleep(25) # Время на вход
 
 # Переходим на страничку студенты
 url_student = "https://logbook.itstep.org/#/students/list"
 element = WebDriverWait(driver, 10).until(ec.url_changes(url_student))
 driver.get(url_student)
-time.sleep(5)
+time.sleep(25)
 
 #Нажимаем на поле групп
 field_group = '/html/body/main/div[2]/div/div[2]/div/div/div[1]/div/div[1]/md-select'
 click_field_group = driver.find_element(By.XPATH, field_group).click()
-time.sleep(15)
+time.sleep(30)
 #Ищем поле поиска
 search_group_X = "/html/body/div[4]/md-select-menu/md-content/md-select-header/input"
 search_group = driver.find_element(By.XPATH, search_group_X)
-search_group.send_keys("П31")
+search_group.send_keys(group)
 time.sleep(3)
 click_search_group_X = "/html/body/div[4]/md-select-menu/md-content/md-optgroup"
 driver.find_element(By.XPATH, click_search_group_X).click()
@@ -116,7 +119,6 @@ for i in range(1, len(stud_list)+1):
             count_hw += 1
         except:
             print("Нет оценки")
-    print("HW", count_hw)
 
     count_class = -1
     lst_class = []
@@ -133,15 +135,16 @@ for i in range(1, len(stud_list)+1):
             print("Нет оценки")
     back_group_X = "/html/body/main/div[2]/div/div[1]/a/span"
     driver.find_element(By.XPATH, back_group_X).click()
-    # driver.find_element(By.XPATH, back_group_X).accessible_name
     time.sleep(3)
     result_dict_home[stud_list[i-1]] = lst
     result_dict_class[stud_list[i-1]] = lst_class
-print(result_dict_home)
-print(result_dict_class)
-print(result(result_dict_home, result_dict_class))
+# print(result_dict_home)
+# print(result_dict_class)
+# print(result(result_dict_home, result_dict_class, c_hw, c_cw))
+result_date = result(result_dict_home, result_dict_class, c_hw, c_cw)
+print(result_date)
+#Вызываем функцию отзывов и передаем в нее данные
+write_reviews(driver, stud_list, result_date)
 
-write_reviews(driver, stud_list)
 
-# time.sleep(20)
 driver.quit()
