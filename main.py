@@ -17,6 +17,11 @@ url = "https://logbook.itstep.org/login/index#/"
 group = input("Введите точное название группы ")
 c_hw = int(input("Введите количество заданных(проверенных) ДЗ "))
 c_cw = int(input('Введите количество проведенных уроков '))
+count_items = int(input("Сколько предметов вы ведете? "))
+# group = "КНК-11"
+# c_hw = 1
+# c_cw = 4
+# count_items = 4
 # login(url)
 options = Options()
 options.add_argument(
@@ -133,6 +138,7 @@ for i in range(1, len(stud_list)+1):
             count_class_work += 1
         except:
             print("Нет оценки")
+    time.sleep(2)
     back_group_X = "/html/body/main/div[2]/div/div[1]/a/span"
     driver.find_element(By.XPATH, back_group_X).click()
     time.sleep(3)
@@ -144,7 +150,7 @@ for i in range(1, len(stud_list)+1):
 result_date = result(result_dict_home, result_dict_class, c_hw, c_cw)
 print(result_date)
 #Вызываем функцию отзывов и передаем в нее данные
-write_reviews(driver, stud_list, result_date)
+write_reviews(driver, stud_list, result_date, count_items)
 
 
 driver.quit()

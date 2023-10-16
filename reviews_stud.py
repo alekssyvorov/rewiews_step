@@ -26,7 +26,7 @@ def writing_review(i, data):
     return res
 
 
-def write_reviews(driver, stud_list, result_date):
+def write_reviews(driver, stud_list, result_date, count_items):
     for i in range(1, len(stud_list) + 1):
         time.sleep(3)
         student_X = f"/html/body/main/div[2]/div/div[2]/div/div/div[2]/div[{i}]/div/div[1]/div/div[2]/span"
@@ -38,59 +38,30 @@ def write_reviews(driver, stud_list, result_date):
         time.sleep(5)
         # ПИШЕМ ОТЗЫВ
         # Поле предметы
-        subject_X = "/html/body/main/div[2]/div/div[3]/div/div/div[2]/div[2]/div[1]/div/md-select"
-        driver.find_element(By.XPATH, subject_X).click()
+        # subject_X = "/html/body/main/div[2]/div/div[3]/div/div/div[2]/div[2]/div[1]/div/md-select"
+        # driver.find_element(By.XPATH, subject_X).click()
 
         # Ищем пречень предметов
-        count = 2 # вернуть на 0
-        while True:
-            try: # Меняю Xpath местами и count .click() в 54 строке не пишем, а в 48 пишем
-                # driver.find_element(By.XPATH, f"/html/body/div[4]/md-select-menu/md-content/md-option[{count}]/div[1]").click()
-                driver.find_element(By.XPATH, f"/html/body/div[4]/md-select-menu/md-content/md-option[{count}]").click()
-                # "f/html/body/div[4]/md-select-menu/md-content/md-option[{count}]"
-                # "/html/body/div[4]/md-select-menu/md-content/md-option[1]"
-                count += 1
-            except:
-                count = 1
-                print("Всего 1 предмет ведете") # Или предметов больше нет
-            try:
-                count = 1
-                print("Взял и упал здесь!")
 
-                names_X = (f"/html/body/div[4]/md-select-menu/md-content/md-option")
-                driver.find_element(By.XPATH, names_X)
-            except:
-                break
-        subject_X = "/html/body/main/div[2]/div/div[3]/div/div/div[2]/div[2]/div[1]/div/md-select"
-        driver.find_element(By.XPATH, subject_X).click()
-        time.sleep(1)
-        for j in range(2, count): # вернуть 1
-            if count == 2:
-                name_sub_X = "/html/body/div[4]/md-select-menu/md-content/md-option"
-                driver.find_element(By.XPATH, name_sub_X)
-                time.sleep(2)
-            else:
-                name_sub_X = f"/html/body/div[4]/md-select-menu/md-content/md-option[{j}]/div[1]"
-                n = driver.find_element(By.XPATH, name_sub_X)
-                time.sleep(3)
-                n.click()
-                time.sleep(2)
+        if count_items == 1:
+            subject_X = "/html/body/main/div[2]/div/div[3]/div/div/div[2]/div[2]/div[1]/div/md-select"
+            driver.find_element(By.XPATH, subject_X).click()
+            time.sleep(2)
+            subject_X = "/html/body/div[4]/md-select-menu/md-content/md-option/div[1]"
+            driver.find_element(By.XPATH, subject_X).click()
             field_rev_X = "/html/body/main/div[2]/div/div[3]/div/div/div[2]/div[2]/div[2]/div[1]/md-input-container/div[1]/textarea"
-
-            # Вставить комментарий
-            print("Вставить комментарий")
             comment = driver.find_element(By.XPATH, field_rev_X)
             time.sleep(1)
             comment.send_keys(writing_review(i, result_date))
             time.sleep(1)
             # Кнопка Отправить
 
-            time.sleep(10)
+            time.sleep(5)
             btn_x = '//*[@id="reviews"]/div[2]/div[2]/button[2]'
-            time.sleep(10)
+            time.sleep(5)
             while True:
                 try:
-                    time.sleep(10)
+                    time.sleep(5)
                     btn_click = driver.find_element(By.XPATH, btn_x)
                     pyautogui.moveTo(500, 500, 2)
                     pyautogui.click()
@@ -102,6 +73,46 @@ def write_reviews(driver, stud_list, result_date):
                     break
                 except:
                     print("Не подходит ")
+            time.sleep(3)
+        else:
+            print("Если предмет не 1")
+
+            for j in range(2, count_items): # вернуть 1
+                subject_X = "/html/body/main/div[2]/div/div[3]/div/div/div[2]/div[2]/div[1]/div/md-select"
+                driver.find_element(By.XPATH, subject_X).click()
+                print(j)
+                name_sub_X = f"/html/body/div[4]/md-select-menu/md-content/md-option[{j}]/div[1]"
+                n = driver.find_element(By.XPATH, name_sub_X)
+                time.sleep(3)
+                n.click()
+                time.sleep(2)
+                field_rev_X = "/html/body/main/div[2]/div/div[3]/div/div/div[2]/div[2]/div[2]/div[1]/md-input-container/div[1]/textarea"
+
+                # Вставить комментарий
+                print("Вставить комментарий")
+                comment = driver.find_element(By.XPATH, field_rev_X)
+                time.sleep(1)
+                comment.send_keys(writing_review(i, result_date))
+                time.sleep(1)
+                # Кнопка Отправить
+
+                time.sleep(5)
+                btn_x = '//*[@id="reviews"]/div[2]/div[2]/button[2]'
+                time.sleep(5)
+                while True:
+                    try:
+                        time.sleep(3)
+                        btn_click = driver.find_element(By.XPATH, btn_x)
+                        pyautogui.moveTo(500, 500, 2)
+                        pyautogui.click()
+                        print("Пытаемся кликнуть по ней")
+                        time.sleep(3)
+                        btn_click.click()
+                        print("Клик прошел!!!!!!!!!!!!!!!!!")
+                        time.sleep(5)
+                        break
+                    except:
+                        print("Не подходит ")
 
         # Назад к группе
         print(" Мы уходим на страницу студентов ")
